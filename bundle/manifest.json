@@ -1,0 +1,20 @@
+{
+  "capabilities": [
+    "storage",
+    "model"
+  ],
+  "compute": {
+    "instruction_budget": 20000000,
+    "memory_bytes": 33554432
+  },
+  "id": "pantry-steward",
+  "integrity": {
+    "bundle_blake3": "5bbfba5f084678c9009f81249cd33f93ec2a57b1c5d77f82e15dac799643a824"
+  },
+  "name": "冰箱管家",
+  "schema": 1,
+  "storage": {
+    "max_bytes": 16777216
+  },
+  "version": "0.4.3"
+}
