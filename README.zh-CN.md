@@ -2,9 +2,15 @@
 
 简体中文 | [English](README.en.md)
 
+## 本次更新：周期方案 0.6.1
+
+保留原桌面界面、官方 AI provider、删除菜谱和默认手动生成。首次流程新增「选择并确认 7／21／30 天周期方案」，确认吃完后累计周期摄入，在「档案」查看进度；「设置」或「档案」可选择下一周期，存档旧周期并保留库存。
+
+旧数据不会清空，但需确认具体周期后继续规划。其他食材仍可入库；要参与数值核算须补齐包装每 100g 成分。数值为原型估算，不是专业营养建议。使用说明和本次验证见 [CYCLE-PLANS.md](CYCLE-PLANS.md) 与 [VALIDATION.md](VALIDATION.md)。以下旧截图及历史运行说明不代表 Android 真机或已发布 App Hub。
+
 **把冰箱里快到期的食材，变成今晚可以执行的一顿饭。**
 
-这是参加 [GOSIM Agentic App 黑客松 2026](https://create.gosim.org/agenticapp26/) 的开源应用，选择 OctoSense + AppCard 场景方向。参赛应用位于 [`apps/pantry-steward/`](apps/pantry-steward/)，当前版本为 **0.4.1**，采用独立 OctoScript 脚本应用包，在未修改的官方 OctoSense 桌面中安装、运行。
+这是参加 [GOSIM Agentic App 黑客松 2026](https://create.gosim.org/agenticapp26/) 的开源应用，选择 OctoSense + AppCard 场景方向。当前版本为 **0.6.1**，采用独立 OctoScript 脚本应用包，在未修改的官方 OctoSense 桌面中安装、运行。
 
 用户确认库存和饮食偏好后，管家生成菜单候选、检查到期与用量、提醒临期食材，并在用户确认实际食用量后更新库存。当前重点是 Windows 桌面的完整任务闭环；在线模型接入已实现，真实提供方请求尚未验证。
 

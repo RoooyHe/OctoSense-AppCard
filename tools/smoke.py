@@ -81,9 +81,18 @@ def exercise(ui):
     ui.check("官方宿主显示首次建档", "首次建档" in ui.text())
     if "首次建档  1 / 3" in ui.text():
         ui.click("选择", index=1)
-    for index, text in enumerate(("30", "170", "65", "清淡", "无")):
-        ui.fill(text, index)
-    ui.click("下一步 · 建立冰箱档案  →")
+    if "首次建档  1 / 4" in ui.text():
+        ui.click("选择", index=1)
+        ui.click("女性")
+        for index, text in enumerate(("30", "170", "65", "", "清淡", "无")):
+            ui.fill(text, index)
+        ui.click("下一步 · 选择周期方案  →")
+        ui.check("周期候选为7/21/30天且未自动启用", [p["days"] for p in ui.state()["programs"]] == [7, 21, 30] and ui.state()["program_active"] == 0)
+        ui.click("确认选中方案 · 去录冰箱  →")
+    else:
+        for index, text in enumerate(("30", "170", "65", "清淡", "无")):
+            ui.fill(text, index)
+        ui.click("下一步 · 建立冰箱档案  →")
     ui.check("档案保存并进入入库页", ui.state()["profile"]["scene"] == "日常健康")
     ui.fill("豆腐", name="food_name")
     ui.fill("abc", name="food_grams")
@@ -147,7 +156,7 @@ def exercise(ui):
     ui.check("用户接受候选成为正式菜单", ui.state()["active"] != 5)
     ui.click("我吃完了 · 核对实际用量")
     before = ui.state_path().read_bytes()
-    ui.fill("999999", 0)
+    ui.fill("999999", 1)
     ui.click(name="confirm_consumption")
     ui.check("超库存扣减被拒绝", ui.state_path().read_bytes() == before and "不能超出库存" in ui.text())
     ui.click("取消")

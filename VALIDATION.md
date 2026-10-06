@@ -1,5 +1,28 @@
 # Migration validation
 
+## Cycle program addition, 2026-10-06
+
+- Bundle 0.6.1 adds explicit 7/21/30-day programs to the existing desktop UI.
+  Official model/storage grants, manual-default generation and deletion remain.
+- Official cached Windows Card runtime: synthetic `qa-cycle` profile, hidden
+  1200x800 viewport. Twelve UI/data checks passed: candidate duration and totals,
+  explicit activation (21 and 30 days), no automatic generation during inventory
+  entry or consumption, inventory validation, cycle intake, deletion preserving
+  intake, and renewal archiving the old cycle without losing inventory.
+- Restart preserved the exact saved profile, active cycle, history and inventory.
+- Synthetic pre-cycle `qa-legacy`: three additional checks passed for 7-day
+  confirmation, inventory/plans/meal preservation, and zero initial new-cycle
+  intake. No script errors appeared in its runtime log. The quit route closes
+  the server connection on this build; that cleanup is not a failed app check.
+- App Hub `stamp` and `check --allow-unsigned` passed. Unsigned source warning
+  is expected; production identity/signing and store publication remain unverified.
+- Fresh period screenshots are hidden Card-runtime captures, not phone images.
+  This update has not been tested on Android or with a live model request.
+- Existing user's `.local-state/` is not used as a test profile. Original sources
+  are backed up before deployment; no host code or downloaded APK is replaced.
+
+Earlier 0.4.3 results below describe that earlier version, not the cycle change.
+
 ## Manual-default and deletion regression, 2026-10-04–05
 
 - Bundle 0.4.3: manual generation by default; persisted opt-in automatic mode;

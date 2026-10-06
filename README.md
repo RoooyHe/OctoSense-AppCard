@@ -2,6 +2,22 @@
 
 English | [简体中文](README.zh-CN.md)
 
+## Cycle programs (0.6.1)
+
+The original desktop UI, official AI provider, confirmed plan deletion and
+manual-default generation are retained. Onboarding now has four steps: direction,
+profile, explicit 7/21/30-day program selection, and inventory. Existing data is
+preserved; review a cycle before planning. Settings and Archive offer
+「选择下一周期方案…」 to archive the current cycle without deleting stock.
+
+Only confirmed meals accumulate intake. Daily and cycle energy budgets are checked;
+unknown ingredient composition requires complete package-label values. Reference
+numbers are prototype estimates, not a nutrition prescription. The app still uses
+host-owned model configuration and does not read ai.env or record audio.
+
+See [cycle details](CYCLE-PLANS.md) and [validation](VALIDATION.md). Prior screenshots
+and 0.4.3 test results below are historical, not evidence for Android or publication.
+
 An independent script bundle for the unmodified official OctoSense desktop.
 The original project's UI, onboarding, inventory, local planner, confirmation
 and persistence are retained. No custom model or speech service is injected.
