@@ -1,195 +1,223 @@
 # 冰箱管家 · Pantry Steward
 
-简体中文 | [English](README.en.md)
+把冰箱里快到期的食材，变成今晚可以执行的一顿饭。
 
-## 本次更新：周期方案 0.6.1
+冰箱管家是基于 OctoSense 官方宿主运行的独立 OctoScript 应用，参赛方向为 **OctoSense + AppCard 场景应用**。
 
-保留原桌面界面、官方 AI provider、删除菜谱和默认手动生成。首次流程新增「选择并确认 7／21／30 天周期方案」，确认吃完后累计周期摄入，在「档案」查看进度；「设置」或「档案」可选择下一周期，存档旧周期并保留库存。
+当前应用版本：**0.6.1**  
+已验证平台：**Windows**  
+Android 及其他平台：**尚未验证**
 
-旧数据不会清空，但需确认具体周期后继续规划。其他食材仍可入库；要参与数值核算须补齐包装每 100g 成分。数值为原型估算，不是专业营养建议。使用说明和本次验证见 [CYCLE-PLANS.md](CYCLE-PLANS.md) 与 [VALIDATION.md](VALIDATION.md)。以下旧截图及历史运行说明不代表 Android 真机或已发布 App Hub。
+## 项目简介
 
-**把冰箱里快到期的食材，变成今晚可以执行的一顿饭。**
+买了食材后，我们常常忘记剩余数量和到期时间；决定吃什么时，又需要重新整理库存、偏好和饮食目标。
 
-这是参加 [GOSIM Agentic App 黑客松 2026](https://create.gosim.org/agenticapp26/) 的开源应用，选择 OctoSense + AppCard 场景方向。当前版本为 **0.6.1**，采用独立 OctoScript 脚本应用包，在未修改的官方 OctoSense 桌面中安装、运行。
-
-用户确认库存和饮食偏好后，管家生成菜单候选、检查到期与用量、提醒临期食材，并在用户确认实际食用量后更新库存。当前重点是 Windows 桌面的完整任务闭环；在线模型接入已实现，真实提供方请求尚未验证。
-
-## 界面预览
-
-下图来自官方 OctoSense 桌面的真实运行截图。
-
-![冰箱管家首页](apps/pantry-steward/bundle/screenshots/01-main.png)
-
-更多截图：[菜单方案](apps/pantry-steward/bundle/screenshots/02-plan.png) · [用量确认](apps/pantry-steward/bundle/screenshots/03-confirm.png) · [库存更新后](apps/pantry-steward/bundle/screenshots/04-updated.png)。
-
-## 要解决的问题
-
-买了食材之后，人们经常忘记库存、到期时间和剩余数量；决定今晚吃什么时，还要重新梳理这些信息。冰箱管家让同一份已确认库存贯穿后续规划和用餐记录，减少重复说明与食材浪费。
-
-完整流程为：
+冰箱管家围绕已确认的库存完成用餐规划：
 
 ```text
-建立饮食档案 → 确认食材入库 → 输入本餐目标 → 生成菜单候选
-       ↑                                       ↓
- 更新档案与库存 ← 核对实际用量并确认扣减 ← 接受今晚方案
-       └──────── 临期检查与下一餐再规划 ──────────┘
+建立饮食档案 → 确认周期方案 → 确认食材入库
+                                  ↓
+输入本餐目标 → 生成菜单候选 → 查看做法并接受方案
+                                  ↓
+确认实际食用量 → 扣减库存并记录摄入 → 继续规划
 ```
 
-菜单生成与库存执行分开：候选生成不代表用户已经接受，接受菜单也不代表已经吃完。库存只在确认实际用量后扣减。
+生成菜单、接受方案和确认食用是三个独立操作。只有用户最终确认实际用量后，应用才扣减库存、累计摄入。
 
-## 已实现的功能
+## 演示与截图
 
-| 功能 | 当前行为 |
-| --- | --- |
-| 首次建档 | 选择饮食场景，填写基础资料、饮食偏好与忌口，再录入第一批食材 |
-| 库存管理 | 按批次保存名称、克数和剩余天数；添加、修改与移除均有确认流程 |
-| 菜单规划 | 根据真实库存生成候选，展示来源、推荐原因、预计时长、食材用量与做法 |
-| 在线模型 | 通过官方宿主 `model.complete` 请求结构化菜单；提供方与密钥由宿主管理 |
-| 本地规则 | 不调用模型，按食材到期顺序安排简单家常搭配；复杂目标理解依赖在线模型 |
-| 临期提醒 | 应用运行期间周期检查临期库存，创建新候选，保留原正式方案供用户比较 |
-| 食用确认 | 核对并修改实际克数；拒绝超量、陈旧方案和重复扣减；确认后再规划 |
-| 本地持久化 | 保存饮食档案、库存、方案、选项和执行记录，重开后恢复 |
-| 用户控制 | 暂停管家、切换规划方式、开关提醒、稍后提醒、重新设置档案 |
-| 比赛演示 | 经确认载入样例、推进演示时间、观察临期重排，并恢复演示前的数据 |
+[查看演示视频](video/演示视频.mp4)
 
-导航包含 **首页 / 冰箱 / 方案 / 档案 / 设置**。界面采用自然光背景、半透明玻璃分区和深绿色主操作。
+![冰箱管家首页](bundle/screenshots/01-main.png)
 
-## 下载与运行
+[菜单方案](bundle/screenshots/02-plan.png) · [用量确认](bundle/screenshots/03-confirm.png) · [库存更新](bundle/screenshots/04-updated.png)
 
-### 环境准备
+以上截图来自此前的官方 Windows 桌面运行记录，不代表新增周期功能的完整截图，也不是手机真机截图。
 
-当前已有 Windows 运行记录。需要 Git、Python **3.11+**、Rust stable，以及 Windows C++ 编译工具和 Windows SDK。首次准备和构建需要联网与可用磁盘空间；这是源码项目，首次双击会编译，不是现成安装包。
+## 已实现功能
 
-项目仓库：[woshuoduijiushidui/OctoSense-AppCard](https://github.com/woshuoduijiushidui/OctoSense-AppCard)。
+- **饮食档案：** 保存基础资料、饮食偏好与忌口。
+- **周期方案：** 选择并确认 7、21 或 30 天周期，在档案中查看记录和进度。
+- **库存管理：** 按批次录入食材、克数和剩余天数，修改与删除均需确认。
+- **菜单规划：** 根据库存和目标生成候选，展示推荐原因、预计时长、用量与做法。
+- **在线 AI：** 通过官方宿主的 `model.complete` 服务请求菜单，由宿主管理提供方与密钥。
+- **本地规则：** 不调用模型，按库存和临期顺序安排简单搭配。
+- **食用确认：** 核对实际克数，校验超量、方案有效性与重复扣减。
+- **方案删除：** 经确认删除菜谱，不回滚库存或删除已记录的摄入。
+- **本地保存：** 保存档案、库存、周期、方案和执行记录。
+- **周期续接：** 存档旧周期，保留库存，再选择下一周期。
 
-以下为新机器的安装步骤；完整冷启动下载流程尚未在本次文档整理中重新验证。已有环境的检查、构建与启动记录见 [VALIDATION.md](apps/pantry-steward/VALIDATION.md)。
+### 手动与自动生成
 
-```powershell
-git clone https://github.com/woshuoduijiushidui/OctoSense-AppCard.git
-cd OctoSense-AppCard
+默认采用手动生成。
+
+库存变化、临期检查和确认食用默认只更新数据或显示提醒，不自动调用模型。用户明确点击生成、备选或重试后，才开始规划。
+
+用户可在设置中主动开启自动生成。即使开启，接受菜单和确认扣减仍需用户操作。已经发送的模型请求可能产生费用，停止等待不保证撤销请求或计费。
+
+## 目录与固定版本
+
+本仓库的 `main` 分支是应用目录：
+
+```text
+bundle/              应用包、图标、背景和截图
+tools/               启动与检查工具
+run.cmd              Windows 启动入口
+CYCLE-PLANS.md       周期方案说明
+VALIDATION.md        验证记录
+PRIVACY.md           隐私说明
+REVIEW-ANSWERS.md    审核问题回答
+video/               演示视频
+```
+
+这里不包含完整的 OctoSense 宿主工程。
+
+当前启动器依赖宿主工程中的 `Cargo.toml`、运行时锁文件和框架依赖。**不能只克隆 main 后，在任意目录直接运行 `run.cmd`。**
+
+比赛固定应用版本为：
+
+- Tag：[`v0.6.1`](https://github.com/woshuoduijiushidui/OctoSense-AppCard/tree/v0.6.1)
+- Commit：`3fb6be2273dce840b3e660e92c61ff066c632f38`
+- 此标签中的应用包路径：`apps/pantry-steward/bundle`
+
+`v0.6.1` 包含完整宿主工程；main 中的最新说明和视频是补充材料，不属于该标签。
+
+## Windows 源码运行
+
+### 环境要求
+
+需要：
+
+- Git
+- Python 3.11 或更新版本
+- Rust stable
+- Windows C++ 编译工具与 Windows SDK
+- 首次准备依赖所需的网络与磁盘空间
+
+这是源码项目，不是预编译安装包。首次准备和编译可能需要较长时间。
+
+### 获取完整固定版本
+
+在终端执行：
+
+```cmd
+git clone --branch v0.6.1 --single-branch https://github.com/woshuoduijiushidui/OctoSense-AppCard.git OctoSense-Pantry-v0.6.1
+cd OctoSense-Pantry-v0.6.1
 python -X utf8 tools/setup.py
 ```
 
-若本机已经有框架依赖仓库，使用官方 setup 的 `--hub` 参数指向已有依赖目录，复用仓库，具体见 [官方环境说明](https://github.com/OctoSense-org/OctoSense)。
+如果本机已有 Makepad 等框架依赖，请按 [官方环境说明](https://github.com/OctoSense-org/OctoSense) 配置依赖目录复用，避免重复下载。
 
-### 第一次打开
+上述新机器完整下载流程尚未重新进行冷启动验证；已有 Windows 环境的运行记录见 [VALIDATION.md](VALIDATION.md)。
 
-从仓库根目录执行：
+### 首次启动
 
-```powershell
-.\apps\pantry-steward\run.cmd --prepare-local-test
+在完整工程根目录执行：
+
+```cmd
+apps\pantry-steward\run.cmd --prepare-local-test
 ```
 
-**执行这个参数表示你同意生成本地测试密钥。** 启动器用它们创建本机测试目录，让应用通过官方 App Hub 的签名、摘要和权限检查安装进桌面。密钥位于系统本地应用数据目录的 `OctoSense/pantry-steward-local-test-keys` 下，位于仓库之外；它们不作为正式发布者身份，也不会提交到远程商店。
+此参数表示同意生成本机测试密钥，用于创建本地签名目录并通过官方安装检查。测试密钥保存在仓库之外，不是正式发布者密钥，也不会将应用提交到远程 App Hub。
 
-首次构建需要等待，请保留命令窗口。启动后会出现官方 OctoSense 桌面，并打开冰箱管家。
+### 后续启动
 
-### 之后打开
+仍在完整工程根目录执行：
 
-直接双击 `apps/pantry-steward/run.cmd`，或者在仓库根目录执行：
-
-```powershell
-.\apps\pantry-steward\run.cmd
+```cmd
+apps\pantry-steward\run.cmd
 ```
 
-不要通过删除 `.local-state/` 解决启动问题，这个目录同时保存了本机测试桌面和应用数据。启动失败时保留窗口中的错误信息。
+启动失败时请保留终端错误信息。不要直接删除 `.local-state`，它包含本机应用数据；删除前应备份。
 
-## 普通用户怎么用
+## 使用方法
 
-1. **建立档案。** 选择饮食场景，填写基础资料、偏好与忌口，确认后进入食材录入。
-2. **录入真实库存。** 输入食材名称、数量（克）和剩余天数，点击预览，核对后确认入库；至少添加一批食材才能完成建档。
-3. **生成这一餐。** 在首页输入目标，例如“优先处理豆腐，做一顿清淡的晚饭”，点击“生成这一餐”。不配置模型时可在设置中切换本地规则。
-4. **查看并接受候选。** 在方案页复核做法和用量，点击“就吃这套 · 设为今晚方案”。
-5. **确认实际食用量。** 做完后点击“我吃完了 · 核对实际用量”，填写真实克数，再确认扣减。取消不会改变库存。
-6. **继续更新冰箱。** 新购买、剩余数量或到期日期变化时更新对应批次，管家将按最新库存重新校验、规划。
+1. 填写基础资料、偏好与忌口。
+2. 查看周期候选，选择并确认一个周期。
+3. 录入食材、克数和剩余天数，预览后确认入库。
+4. 在首页输入本餐目标，点击生成。
+5. 查看候选的做法与用量，确认接受方案。
+6. 实际吃完后核对真实用量，再确认扣减。
+7. 在冰箱与档案页面查看库存变化和周期记录。
 
-## 在线 AI 怎么配置
+具体周期规则见 [CYCLE-PLANS.md](CYCLE-PLANS.md)。
 
-**这个版本使用官方 OctoSense 宿主的 AI 提供方设置，不读取旧版本的 `ai.env`。** 在启动器打开的测试桌面中，通过 OctoSense 的 AI providers 设置配置老师提供的接口信息与 Token。配置入口和实际支持的提供方以当前宿主界面为准。
+## 在线 AI 配置
 
-请求路径是：
+本版本使用 **OctoSense 官方宿主的 AI providers 设置**。
+
+应用不读取 `ai.env`，不要求用户在应用内填写 API Key，也不在脚本中直接访问模型提供方。请在启动器打开的测试桌面中配置宿主的模型提供方。
 
 ```text
-main.splash → 官方 model.complete 服务 → 宿主管理的模型提供方
-            ← 结构化结果与预算信息 ←
-应用复核库存、到期日期和累计用量 → 创建待确认候选
+应用提交目标、档案和库存
+          ↓
+官方 model.complete 服务
+          ↓
+宿主管理的模型提供方
+          ↓
+应用校验结果，展示待确认菜单
 ```
 
-规划会发送本餐目标、饮食档案、可用食材的名称/克数/剩余天数、原菜单标题和触发原因。应用不读取 Token，不在脚本中收集密钥；请不要将 Token 放进 GitHub 或 bundle。
+`model.budget` 查询成功不代表模型已配置或生成已成功。应以实际请求结果和菜单来源标记判断。
 
-`model.budget` 查询成功只代表预算服务可响应，**不代表模型已经配置或请求已经成功**。以实际生成结果及候选的“在线 AI”来源为准。超时、无服务、无提供方或结果不合规时会显示提示；需要时手动切换本地规则。
+用户曾报告在线模型生成成功；自动回归记录主要使用本地规则，不代表已经完成 0.6.1 的完整在线模型测试。
 
-此迁移版已接入官方接口，但真实在线模型请求、无提供方错误的完整链路尚未验证。独立 `--standalone` 预览使用官方 `card-host`，它不提供模型服务，应使用本地规则。
+## 验证情况与边界
 
-## 给评委的 3 分钟演示路径
-
-1. 完成首次建档，在设置中切换到本地规则，确认载入演示数据。演示前状态会备份。
-2. 回首页查看已有原菜单，再到设置点击“时间 +12 小时”。这只推进演示时钟。
-3. 查看豆腐临期触发的新候选，比较原菜单与新方案；原方案在用户接受前仍保留。
-4. 接受新方案，核对实际用量，先取消一次，展示库存不变；再次确认，展示真实扣减与下一餐候选。
-5. 重开应用，检查库存、方案和选项恢复。
-
-这条路径展示可复现的本地闭环。在线演示需提前在同一宿主配置提供方，并完成真实调用验证；本地规则演示不作为在线 AI 成功的证据。
-
-## 参赛与提交说明
-
-参赛方向为 **OctoSense + AppCard 场景应用**，实际交付形态为官方宿主中运行的非系统 OctoScript 应用。场景重点是：确认真实状态、规划行动、用户审批、执行与结果复核。
-
-按 [比赛页面](https://create.gosim.org/agenticapp26/) 当前说明，初赛提交需包含场景、可运行原型、源码、截图与演示，截止时间为 **2026 年 10 月 4 日 23:59（UTC+8）**；作品需以 Apache-2.0 开源。具体提交入口、成员信息和补充材料以主办方通知为准。README 不代表资格审核或获奖承诺。
-
-比赛提交与 App Hub 上架分别准备。公开仓库提供应用源码、启动工具和验证材料；App Hub 应用包候选是：
+应用包检查结果：
 
 ```text
-apps/pantry-steward/bundle/
+pantry-steward 0.6.1 — PASSED
+[warning] publisher-signature: unsigned: accountability rests on the hub alone
+grants: capabilities {"model", "storage"}, hosts {}, storage 16777216 bytes, agent none
 ```
 
-只有 bundle 是应用分发内容。发布者身份和隐私文本仍待本人确认，正式签名和商店提交尚未完成；本机测试镜像不等于上架。[官方发布流程](https://github.com/OctoSense-org/OctoScript-App-Design-Flow/blob/main/docs/PUBLISHING.md)。
+启动器的 7 项测试通过。周期功能的隔离 Windows 测试及历史界面测试见 [VALIDATION.md](VALIDATION.md)。
 
-## 代码与数据位置
+检查通过不等于新机器构建通过、所有功能验证完成、比赛资格确认或正式商店审核通过。
 
-| 路径 | 用途 |
-| --- | --- |
-| `apps/pantry-steward/bundle/main.splash` | 应用界面、库存、规划、提醒、确认与持久化逻辑 |
-| `apps/pantry-steward/bundle/manifest.json` | 应用 ID、版本、storage/model 权限和额度 |
-| `apps/pantry-steward/bundle/listing.json` | 商店介绍、图标、截图和发布者字段 |
-| `apps/pantry-steward/bundle/assets/` | 图标与背景资源 |
-| `apps/pantry-steward/bundle/screenshots/` | 真实官方桌面运行截图 |
-| `apps/pantry-steward/tools/launch.py` | 官方 CLI 构建、本机测试镜像安装与启动 |
-| `apps/pantry-steward/.local-state/` | 隔离测试桌面、应用安装与库存数据，不提交 Git |
-| `apps/pantry-steward/VALIDATION.md` | 实际验证记录与未验证项 |
-| `apps/pantry-steward/PRIVACY.md` | 待作者确认的隐私说明 |
-| `apps/pantry-steward/REVIEW-ANSWERS.md` | App Hub 七项审核问题的草稿回答 |
+当前限制：
 
-默认库存位于 `.local-state/apps/pantry-steward/` 下的运行沙箱内，包括 `pantry.json`、`pantry.backup.json` 和 `before-demo.json`。使用 `--app-data` 时数据位于指定测试目录。迁移版不复制原项目库存和 AI 配置。
+- 麦克风图标仅显示语音识别不可用提示，不录音或上传音频。
+- 未实现照片识别、小票 OCR 或买菜下单。
+- 宿主关闭后不执行后台临期检查。
+- 未验证 Android、iOS、macOS 和 Linux。
+- 能量、营养与周期目标为原型估算，不是医疗或专业营养建议。
+- 食材到期信息由用户填写，应用不能保证食品安全。
+- 未知食材参与数值核算前，需要补齐包装标签成分。
 
-## 验证与当前边界
+## 数据与隐私
 
-以下是 [2026-10-02 验证记录](apps/pantry-steward/VALIDATION.md)中的结果，本次 README 整理未重新执行程序：
+库存、档案、方案和执行记录保存在应用自己的存储目录中。
 
-- 官方 OctoSense 验证基线：[`b221f7b4`](https://github.com/OctoSense-org/OctoSense/commit/b221f7b4c877dd823d04e4ee510cc74880de5535)；App Hub 固定版本：[`58c3c8ae`](https://github.com/OctoSense-org/OctoSense-App-Hub/commit/58c3c8aed8fc811a16d67c5f784a8a44214ff876)。
-- `pantry-steward 0.4.1 — PASSED`：源 bundle 准入检查通过，只有未签名警告，授予 storage/model；本机签名快照也通过检查。
-- **18 项官方宿主界面与数据检查通过**，覆盖建档、入库、临期重排、方案接受、取消、超量拒绝、扣减和重启持久化。
-- **6 项启动器检查通过**；Windows 批处理入口启动成功。
-- 已检查运行日志与四张真实截图。正式发布签名、App Hub 提交及其他平台未验证。
+在线规划会向宿主管理的模型提供方发送本餐目标、饮食档案、库存和成分参考、周期及余额等规划所需信息。提供方的数据处理与费用以其政策和用户账户设置为准。
 
-语音图标目前只提示识别不可用，不录音。拍照识别、OCR、买菜下单、Android 真机与 APK 尚未交付。运行期间的临期检查不等于宿主关闭后的系统后台服务。
+应用不收集密码或 API Key，不读取其他应用数据；未接入广告与分析统计。
 
-热量、营养和偏好展示属于原型估算或简单规则，不能当作专业营养测量、长期学习模型或医疗建议。到期天数由用户输入，不保证食品安全；忌口仍需用户复核。
+当前 [PRIVACY.md](PRIVACY.md) 仍为待作者确认的说明草稿，正式发布前需完成确认。
 
-## 开发与复核
+## App Hub 提交
 
-在仓库根目录执行以下已记录的检查与独立预览命令：
+已创建提交请求：
 
-```powershell
-python -X utf8 apps/pantry-steward/tools/launch.py --check
-python -X utf8 -m unittest discover -s apps/pantry-steward/tools -p 'test_*.py'
-python -X utf8 apps/pantry-steward/tools/launch.py --standalone
-```
+[Submit pantry-steward 0.6.1 · Issue #99](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/99)
 
-官方宿主 UI 回归需要先启动独立的隐藏测试桌面，再按 `tools/smoke.py` 的端口和 profile 参数操作。使用测试数据，详见 [验证记录](apps/pantry-steward/VALIDATION.md)。
+该请求指定 `v0.6.1`、完整提交号与 `apps/pantry-steward/bundle` 路径，并提供检查输出和审核问题回答。
 
-## 许可证与来源
+**已提交审核不代表已上架。** 是否通过及是否进入正式目录，以 App Hub 维护者反馈为准。
 
-本仓库使用 [Apache License 2.0](LICENSE)。第三方框架与素材的声明见 [NOTICE](NOTICE) 和 [LICENSES/](LICENSES/)。
+比赛提交无需等待商店上架；仓库、固定版本、演示视频及成员资料应按主办方或老师最新通知提交。
 
-冰箱管家应用由本项目开发，宿主基础来自 [官方 OctoSense](https://github.com/OctoSense-org/OctoSense)，发布路径参考 [OctoScript App Design Flow](https://github.com/OctoSense-org/OctoScript-App-Design-Flow) 与 [OctoSense App Hub](https://github.com/OctoSense-org/OctoSense-App-Hub)。官方桌面、手机与 ROM 的进一步说明分别见 [desktop/](desktop/README.zh-CN.md)、[phone/](phone/README.zh-CN.md) 和 [rom/](rom/README.zh-CN.md)。
+## 作者与来源
+
+作者：leoniaodo、zix、power胖丸、Roooy。
+
+基础宿主：[OctoSense](https://github.com/OctoSense-org/OctoSense)  
+开发参考：[OctoScript App Design Flow](https://github.com/OctoSense-org/OctoScript-App-Design-Flow)  
+发布规范：[OctoSense App Hub](https://github.com/OctoSense-org/OctoSense-App-Hub)
+
+## 许可证
+
+项目采用 Apache License 2.0。
+
+完整固定版本中的 [LICENSE](https://github.com/woshuoduijiushidui/OctoSense-AppCard/blob/v0.6.1/LICENSE) 与 [NOTICE](https://github.com/woshuoduijiushidui/OctoSense-AppCard/blob/v0.6.1/NOTICE) 可供查阅。分发源码时，应保留适用的许可证和第三方来源声明。
