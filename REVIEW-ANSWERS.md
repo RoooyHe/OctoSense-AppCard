@@ -1,28 +1,38 @@
-# Local review draft — not an official approval
+# Review answers — 0.6.2 editable candidate, not an approval
 
-Based on source inspection and the Windows tests in VALIDATION.md. The App Hub
-scan packet is in build/review.json; no external reviewer ran.
+The script is unchanged from 0.6.1. Generate a fresh packet after stamping,
+outside bundle/. These answers do not claim a release, paid provider test
+or Hub approval.
 
-1. **Claims:** main.splash implements onboarding, manually confirmed inventory,
-   expiry ordering, local rule planning, plan acceptance, actual consumption and
-   persistence. model.complete is connected to the official contract but live
-   online answers were not tested. Listing explicitly says voice is unavailable,
-   there is no OCR, and the app does not run when the shell is closed.
-2. **Platform/category:** Windows was actually tested. lifestyle fits meal and
-   pantry management. No mobile/macOS/Linux platform claim is made.
-3. **Capabilities/hosts:** storage saves pantry.json and backups in the app jail;
-   model supports the visible online-planning option through the official host.
-   There are no direct outbound HTTPS hosts, no net grant and no microphone
-   grant. The host, not the app, chooses model providers and handles credentials.
-4. **Deception:** no login, key, payment or system-approval imitation is present.
-   F is the app's own mark. Screenshots show the genuine official desktop,
-   not a painted host. Local rule menus visibly identify their source.
-5. **Instructions:** online_plan contains an explicit task for the model to
-   produce constrained meal JSON. It is a functional app prompt, not a hidden
-   instruction to reviewers. Inventory/profile text is sent as input data.
-6. **Abuse:** no abusive wording or text directed at a private individual was
-   found in the migrated source; test profiles are synthetic.
-7. **Route: human-review.** Publisher identity and privacy text/URL require the
-   author's confirmation; live AI remains unverified. Local test signing is not
-   production release signing. Passing the automated gate is not competition
-   admission or official store approval.
+1. **Claims.** bundle/main.splash implements explicit profile/cycle confirmation,
+   inventory preview, local/model candidates, acceptance, actual consumption,
+   deletion and persistence. Generation is manual by default. bundle/listing.json
+   records prototype nutrition, historical captures and unverified live-provider/
+   cold-start behavior. See CYCLE-PLANS.md and VALIDATION.md.
+2. **Platforms/category.** Windows has historical evidence and a limited
+   current-toolchain native smoke test. lifestyle fits pantry/meal planning.
+   Full functional regression, other platforms and sealed-release installation
+   remain unverified.
+3. **Grants/hosts.** bundle/manifest.json requests storage/model only.
+   The script uses its filesystem sandbox and official model.complete/budget.
+   No direct outbound hosts or microphone grant. PRIVACY.md describes inputs
+   leaving the device and optional automatic triggers.
+4. **Deception.** No secret/key/login/payment input or system-approval imitation.
+   Candidates identify source; the microphone explains unavailability.
+   bundle/screenshots holds historical genuine Windows captures, not phone
+   screenshots or complete 0.6.2 live-model evidence.
+5. **Instructions.** online_plan requests constrained meal JSON as the visible
+   planning feature, not an instruction to reviewers. Profile/inventory remains
+   input data. No tools.json, AGENT.md or app-agent skills are shipped.
+6. **Abuse.** Source review found no abusive wording directed at a private person.
+   Test records use synthetic profiles; this is not external review approval.
+7. **Route: human review.** Check final links, tag, latest-toolchain gate, UI/
+   provider evidence, the recorded original-artwork declaration and the
+   downloaded sealed release. The author confirmed the background is their
+   own original artwork on 2026-10-08; this is not independent verification.
+   Publisher names, Windows-only claim and privacy disclosure were confirmed
+   by the user during local repair. Publication authorization, release proof
+   and Hub approval are pending. Local test keys are not publisher identity.
+
+If the regenerated packet adds questions, answer them rather than silently
+reusing seven answers. No app-agent files were added by this repair.

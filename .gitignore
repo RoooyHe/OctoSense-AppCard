@@ -4,3 +4,10 @@ __pycache__/
 *.pyc
 ai.env
 *.key
+target/
+.env
+.env.*
+*.pem
+*.p12
+*.pfx
+*.jks

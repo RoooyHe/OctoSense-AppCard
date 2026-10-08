@@ -1,5 +1,126 @@
 # Migration validation
 
+## Original-artwork confirmation, 2026-10-08 — current 0.6.2 candidate
+
+The author confirmed sunlit-pantry-bg.png is their own original artwork.
+Recorded that declaration in root/bundle notices, bilingual READMEs, review
+answers and submission checklist. This resolves the author's outstanding
+asset-origin checkpoint; it is not independent rights verification. Earlier
+pending-artwork statements below describe the earlier repair checkpoint.
+
+Only notices/docs changed; application logic and artwork are unchanged.
+The current official pinned hub restamped the editable bundle after this
+notice edit. Current source digest:
+`851f2c46a63bd1a129a8c451acbe4992e2d11a8f7e81ffa3376307268640d103`.
+Source gate passed with only the expected unsigned warning; scan regenerated
+seven questions; all 18 automated tests passed again; git diff --check passed.
+Current total size: 8,357,004 bytes, 31,604 bytes below 8 MiB.
+
+The seven native checks below were performed before this notice-only edit;
+they were not rerun or relabelled as full functional regression. Live-provider
+tests, attested-release verification, platform limits and human approval
+remain as listed below. No commit, tag, push, release or Issue was made.
+
+## Local compliance repair, 2026-10-08 — 0.6.2 candidate
+
+This dated entry supersedes earlier pending publisher/privacy statements;
+it does not rewrite the historical test records below or admit any version.
+The user confirmed publisher display names, Windows-only claims and privacy
+disclosure, and authorized local repair only. No commit, pushed tag, GitHub
+workflow run, release or submission issue was created in this repair.
+
+### Source and metadata
+
+- Repair checkout: app-only remote main at
+  `fd5baccd45e2aa39a8723e7c1efdd263342b0c7d`, local branch
+  `codex/compliance-0.6.2`. The original full host at `E:\codeh\OctoSense`
+  and its user's inventory were not replaced.
+- `bundle/main.splash` is unchanged: Git blob
+  `8e9660e130b45d6a3e71f8ff94f1bfb1e7d0d78e`, identical in the baseline
+  remote commit, repair checkout and original full host's app directory.
+- Corrected support/privacy URLs, release notes/version, bilingual launch
+  instructions and review answers. Added Apache-2.0 license and notices
+  at the repository root and inside the bundle with allowed `.txt` names.
+- `.gitattributes` disables bundle text conversion; native installer source
+  and tool scripts use LF, Windows batch entrypoint remains CRLF.
+- `sunlit-pantry-bg.png` and historical screenshots were preserved. Image
+  ownership/redistribution evidence remains a release-blocking author checkpoint.
+
+### Current official source gate
+
+- App Hub: `655114c4943cd2490daaefa2173e7b5aaa20669f`, the workflow pin.
+  Built both `hub` and `card-host` on Windows with Rust 1.98.1, from the
+  unmodified official checkout using `cargo build --locked --release`.
+  The original workspace and lock file were unchanged. Its exact dependencies
+  were reused from Cargo-managed caches via local junctions; no user's shared
+  framework checkout was modified.
+- Native pins: Makepad `32d6415fb7476345ad36ee4f98d6f844d1f07fd2`,
+  Octoscript-Makepad `33dea2f1f3ad3f1346a219aa8cf6e91b31361e23`,
+  Octoscript `2e37d9e657a246f16718d9a475e167ccd2d5b5fa`.
+- The old `0d5b47...` Windows CLI first passed the pre-license bundle, then
+  incorrectly treated the full Apache license URL as a remote asset. The
+  current CLI also exposed its old path-hash mismatch. These were not worked
+  around with extra grants, stripped legal text or changes to the gate.
+- Restamped only the unsigned editable source with the current official tool:
+  `4f09efe71f2db070322f4959e8e86b2b36aa8555b9426547ae45198a63661c0e`.
+  This is NOT a sealed-release proof or a manually invented hash.
+- `hub check bundle --allow-unsigned` and its JSON form passed, structural
+  stage, with only the expected unsigned warning. Grants: storage/model,
+  no outbound hosts, 16 MiB storage, no app agent.
+- `hub scan bundle --packet build/review.json` generated all seven questions;
+  no external reviewer ran. Answers are in REVIEW-ANSWERS.md.
+- `python -B -X utf8 tools/launch.py --hub
+  build/hub-reviewed/target/release/hub.exe --check` passed with no host,
+  key generation, installation or implicit restamping.
+- Total bundle size is 8,357,017 bytes, below 8,388,608 bytes. Remaining
+  headroom is only 31,591 bytes; future artwork changes must recheck size.
+
+### Automated and native checks
+
+- `python -B -X utf8 -m unittest discover -s tools -p 'test_*.py'`:
+  **18 passed**. Includes batch dispatch/error status, explicit tool/host
+  resolution, no implicit key creation, no launcher restamp, permission and
+  metadata guards, required legal files, platform and local-document links.
+- Both new listing URLs returned HTTP 200. The remote pages still describe
+  the previously pushed state until these local changes are authorized/pushed.
+- Isolated Git index checkout with `core.autocrlf=true` under `build/`
+  preserved the bundle's bytes; the current gate passed that checkout and
+  SHA256 of main.splash matched. This is a local byte-conversion test,
+  not a new remote tag clone or release download verification.
+- Current official `card-host`, hidden 1200x800, separate synthetic
+  `.local-state/qa-current-062`, remote port 18529: **7 native checks passed**.
+  First run rendered; 7/21/30-day choices required confirmation; explicit
+  cycle activation worked; inventory preview did not commit; confirmed
+  synthetic spinach committed; manual default did not generate a plan;
+  restart preserved the exact saved synthetic state.
+- Native driver: `build/native_compliance.py` for the six first-run checks,
+  followed by `tools/qa_release.py --port 18529 --profile
+  .local-state/qa-current-062 --restart` for persistence. The equivalent
+  reusable driver is now in tools/qa_release.py and requires a task-owned
+  qa-* profile under .local-state. Do not point it at real inventory.
+- Opened and visually inspected both genuine native test captures. They
+  remain outside bundle/. No app callback/closure/error-level messages were
+  found in these run/restart logs. Native startup produced informational
+  UI-hang samples and the build produced upstream compiler warnings; these
+  are not claimed as warning-free runs. All task-owned hidden instances quit.
+- `git diff --check` passed. Local-state, build products and test captures
+  are ignored. No real AI credentials, model calls or new signing keys used.
+
+### Still pending — no approval guarantee
+
+Background rights, full current-toolchain feature regression, live model
+provider tests, fresh-computer setup, other platforms, GitHub Actions
+execution, downloaded attested release-pack/receipt verification, publisher
+continuity against the authenticated catalog, Store installation and Hub
+approval are unverified. The prepared workflow does not supply any of that
+evidence until it actually runs and its downloaded artifacts are verified.
+Its pinned Rust 1.97.1 Linux environment is distinct from this Windows build.
+The teacher decides competition qualification and deadline eligibility.
+
+Issue #99 still refers to immutable 0.6.1. Current submission rules require
+one issue per planned version; 0.6.2 needs a new issue linked to #99 after
+human authorization, never a moved v0.6.1 tag or a replacement version comment.
+
 ## Cycle program addition, 2026-10-06
 
 - Bundle 0.6.1 adds explicit 7/21/30-day programs to the existing desktop UI.

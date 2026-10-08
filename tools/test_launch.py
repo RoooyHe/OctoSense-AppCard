@@ -13,6 +13,49 @@ spec.loader.exec_module(launch)
 
 
 class LaunchTests(unittest.TestCase):
+    def test_current_hub_check_needs_no_host_or_keys(self):
+        with tempfile.TemporaryDirectory() as directory:
+            tool = Path(directory) / "hub.exe"
+            tool.touch()
+            with patch.object(launch, "host_workspace") as host, \
+                 patch.object(launch, "prepare_tools") as build, \
+                 patch.object(launch, "local_install") as install, \
+                 patch.object(launch, "run") as call, \
+                 patch("sys.argv", ["launch.py", "--hub", str(tool), "--check"]):
+                launch.main()
+            host.assert_not_called()
+            build.assert_not_called()
+            install.assert_not_called()
+            self.assertEqual(call.call_args.args[0], [tool.resolve(), "check", launch.APP / "bundle", "--allow-unsigned"])
+
+    def test_current_hub_rejects_implicit_key_creation(self):
+        with patch("sys.argv", ["launch.py", "--hub", "hub.exe", "--prepare-local-test"]), \
+             patch.object(launch, "prepare_tools") as build, patch.object(launch, "local_install") as install:
+            with self.assertRaises(SystemExit) as error:
+                launch.main()
+            self.assertEqual(error.exception.code, 2)
+            build.assert_not_called()
+            install.assert_not_called()
+
+    def test_standalone_checkout_requires_host(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(launch, "APP", Path(directory) / "standalone-app"):
+                with self.assertRaisesRegex(RuntimeError, "--host-workspace"):
+                    launch.host_workspace()
+
+    def test_explicit_host_rejects_incomplete_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(RuntimeError, "宿主目录不完整"):
+                launch.host_workspace(Path(directory))
+
+    def test_launch_does_not_restamp_source(self):
+        with patch.object(launch, "host_workspace", return_value=launch.APP), \
+             patch.object(launch, "prepare_tools", return_value=(Path("hub"), Path("card-host"), Path("installer"))), \
+             patch.object(launch, "run") as call, patch("sys.argv", ["launch.py", "--check"]):
+            launch.main()
+        self.assertEqual(len(call.call_args_list), 1)
+        self.assertEqual(call.call_args.args[0][1], "check")
+
     @unittest.skipUnless(os.name == "nt", "Windows batch launcher")
     def test_windows_entrypoint_format(self):
         script = (launch.APP / "run.cmd").read_bytes()

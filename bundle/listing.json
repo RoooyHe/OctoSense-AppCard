@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "subtitle": "把临期食材变成今晚的一顿饭",
-  "description": "独立 OctoScript 冰箱管家原型：首次建立饮食档案，手动确认食材入库，本地规则或官方宿主的 model.complete 服务生成菜单候选；用户接受后核对实际食用量并确认扣减。在线菜单经过结构、到期与用量校验。模型提供方和密钥由官方宿主管理，应用不读取 ai.env。没有模型服务时可使用本地规则。保留麦克风图标，但本版本不录音，语音识别暂不可用。未接入照片或 OCR，宿主关闭后不后台运行。发布者和隐私链接仍需作者确认，此包用于本地评审。",
+  "description": "独立 OctoScript 冰箱管家原型：建立饮食档案，确认7、21或30天周期，手动确认食材入库，通过本地规则或官方宿主的model.complete生成菜单候选；接受菜单与确认实际用量分别操作，最终确认才扣减库存和记录摄入。默认手动生成，自动生成须主动开启。在线结果经过结构、到期与累计用量校验；提供方和密钥由宿主管理，应用不读取ai.env。可手动切换本地规则。此版本完整在线模型流程及新电脑冷启动未重新验证；截图来自历史Windows运行。热量和营养为原型估算，不能保证营养或过敏安全。不录音，未接入语音识别、照片或OCR，宿主关闭后不后台运行。",
   "category": "lifestyle",
   "keywords": ["冰箱", "库存", "临期", "Octoscript"],
   "screenshots": ["screenshots/01-main.png", "screenshots/02-plan.png", "screenshots/03-confirm.png", "screenshots/04-updated.png"],
@@ -9,10 +9,10 @@
   "platforms": ["windows"],
   "publisher": {
     "name": "leoniaodo,zix,power胖丸,Roooy",
-    "support": "https://github.com/woshuoduijiushidui/OcSense-AppCard/issues",
-    "privacy_policy_url": "https://github.com/woshuoduijiushidui/OcSense-AppCard/blob/main/apps/pantry-steward/PRIVACY.md"
+    "support": "https://github.com/woshuoduijiushidui/OctoSense-AppCard/issues",
+    "privacy_policy_url": "https://github.com/woshuoduijiushidui/OctoSense-AppCard/blob/main/PRIVACY.md"
   },
-  "release_notes": "0.6.1：新增选择并确认7、21、30天周期方案、今日及周期余额校验、用餐累计和周期存档。保留原桌面布局、默认手动生成、删除菜谱及官方宿主AI。旧库存和历史菜谱保留；继续规划前需确认具体周期。成分未知的食材需补包装标签，数值仅为原型估算。语音识别暂不可用。源应用包未签名，尚未正式发布。",
+  "release_notes": "0.6.2：修正支持与隐私链接，更新双语运行说明、许可证及发布资料，保护bundle字节不被Git换行转换。保留0.6.1的7、21、30天周期方案、余额校验、用餐累计与周期存档，应用业务脚本不变。旧库存和历史菜谱保留；未知成分需补包装标签，数值为原型估算。仅Windows已有运行记录；当前版本完整在线模型流程和其他平台未验证。",
   "age_rating": "all",
   "license": "Apache-2.0"
 }

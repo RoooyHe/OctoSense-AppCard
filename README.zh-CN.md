@@ -1,223 +1,76 @@
 # 冰箱管家 · Pantry Steward
 
-把冰箱里快到期的食材，变成今晚可以执行的一顿饭。
+简体中文 | [English](README.md)
 
-冰箱管家是基于 OctoSense 官方宿主运行的独立 OctoScript 应用，参赛方向为 **OctoSense + AppCard 场景应用**。
+把确认过的库存，变成可以复核并执行的一顿饭。
 
-当前应用版本：**0.6.1**  
-已验证平台：**Windows**  
-Android 及其他平台：**尚未验证**
+## 版本与验证范围
 
-## 项目简介
+本目录为 **0.6.2 可编辑候选**，修正发布资料和独立启动器。业务脚本与 0.6.1 相同。[Issue #99](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/99) 请求审核的是 **0.6.1**，不是此候选；不声称任何版本已获准上架。
 
-买了食材后，我们常常忘记剩余数量和到期时间；决定吃什么时，又需要重新整理库存、偏好和饮食目标。
+仅声明 Windows：当前固定工具链已通过源码检查和有限原生冒烟测试。本候选的完整在线模型回归、新电脑安装、全功能回归和封存包安装仍未验证，见[验证记录](VALIDATION.md)。
 
-冰箱管家围绕已确认的库存完成用餐规划：
+## 功能闭环
 
-```text
-建立饮食档案 → 确认周期方案 → 确认食材入库
-                                  ↓
-输入本餐目标 → 生成菜单候选 → 查看做法并接受方案
-                                  ↓
-确认实际食用量 → 扣减库存并记录摄入 → 继续规划
-```
+确认饮食档案及 7／21／30 天周期 → 预览库存批次 → 生成本地规则或官方 model.complete 候选 → 查看做法和用量 → 接受方案 → 单独确认实际食用量，才扣库存和累计摄入。
 
-生成菜单、接受方案和确认食用是三个独立操作。只有用户最终确认实际用量后，应用才扣减库存、累计摄入。
+今日和周期数值为原型估算。存档旧周期保留库存。默认手动生成；可在设置中主动开启自动生成，但接受菜单和扣减仍须确认。删除菜谱不回滚库存或删除摄入记录。详见[周期说明](CYCLE-PLANS.md)。
 
-## 演示与截图
+## 演示
 
-[查看演示视频](video/演示视频.mp4)
+[查看录屏](video/演示视频.mp4)
 
-![冰箱管家首页](bundle/screenshots/01-main.png)
+![历史 Windows 截图](bundle/screenshots/01-main.png)
 
-[菜单方案](bundle/screenshots/02-plan.png) · [用量确认](bundle/screenshots/03-confirm.png) · [库存更新](bundle/screenshots/04-updated.png)
+[菜单候选](bundle/screenshots/02-plan.png) · [食用确认](bundle/screenshots/03-confirm.png) · [库存](bundle/screenshots/04-updated.png)
 
-以上截图来自此前的官方 Windows 桌面运行记录，不代表新增周期功能的完整截图，也不是手机真机截图。
-
-## 已实现功能
-
-- **饮食档案：** 保存基础资料、饮食偏好与忌口。
-- **周期方案：** 选择并确认 7、21 或 30 天周期，在档案中查看记录和进度。
-- **库存管理：** 按批次录入食材、克数和剩余天数，修改与删除均需确认。
-- **菜单规划：** 根据库存和目标生成候选，展示推荐原因、预计时长、用量与做法。
-- **在线 AI：** 通过官方宿主的 `model.complete` 服务请求菜单，由宿主管理提供方与密钥。
-- **本地规则：** 不调用模型，按库存和临期顺序安排简单搭配。
-- **食用确认：** 核对实际克数，校验超量、方案有效性与重复扣减。
-- **方案删除：** 经确认删除菜谱，不回滚库存或删除已记录的摄入。
-- **本地保存：** 保存档案、库存、周期、方案和执行记录。
-- **周期续接：** 存档旧周期，保留库存，再选择下一周期。
-
-### 手动与自动生成
-
-默认采用手动生成。
-
-库存变化、临期检查和确认食用默认只更新数据或显示提醒，不自动调用模型。用户明确点击生成、备选或重试后，才开始规划。
-
-用户可在设置中主动开启自动生成。即使开启，接受菜单和确认扣减仍需用户操作。已经发送的模型请求可能产生费用，停止等待不保证撤销请求或计费。
-
-## 目录与固定版本
-
-本仓库的 `main` 分支是应用目录：
-
-```text
-bundle/              应用包、图标、背景和截图
-tools/               启动与检查工具
-run.cmd              Windows 启动入口
-CYCLE-PLANS.md       周期方案说明
-VALIDATION.md        验证记录
-PRIVACY.md           隐私说明
-REVIEW-ANSWERS.md    审核问题回答
-video/               演示视频
-```
-
-这里不包含完整的 OctoSense 宿主工程。
-
-当前启动器依赖宿主工程中的 `Cargo.toml`、运行时锁文件和框架依赖。**不能只克隆 main 后，在任意目录直接运行 `run.cmd`。**
-
-比赛固定应用版本为：
-
-- Tag：[`v0.6.1`](https://github.com/woshuoduijiushidui/OctoSense-AppCard/tree/v0.6.1)
-- Commit：`3fb6be2273dce840b3e660e92c61ff066c632f38`
-- 此标签中的应用包路径：`apps/pantry-steward/bundle`
-
-`v0.6.1` 包含完整宿主工程；main 中的最新说明和视频是补充材料，不属于该标签。
+截图来自历史 Windows 原生运行，不是手机截图或 0.6.2 在线模型完整证据。视频不放进分发包。
 
 ## Windows 源码运行
 
-### 环境要求
+本仓库只含应用，不是完整宿主或安装包。入口是根目录 run.cmd，不是 apps/pantry-steward/run.cmd。
 
-需要：
+需要 Git、Python 3.11+、Rust、Windows C++ 工具和 Windows SDK。按[官方 Quickstart](https://github.com/OctoSense-org/OctoScript-App-Design-Flow/blob/main/docs/QUICKSTART.md)准备当前原生工作区，构建 hub 与 card-host；复用共享框架，但必须核对官方固定版本，不能只用旧缓存程序代替。
 
-- Git
-- Python 3.11 或更新版本
-- Rust stable
-- Windows C++ 编译工具与 Windows SDK
-- 首次准备依赖所需的网络与磁盘空间
+此候选的发布工作流固定 App Hub 655114c4943cd2490daaefa2173e7b5aaa20669f。本地已使用该版本、未修改的源代码和锁文件编译检查器。完整新电脑下载/构建仍未验证。
 
-这是源码项目，不是预编译安装包。首次准备和编译可能需要较长时间。
-
-### 获取完整固定版本
-
-在终端执行：
+假设工具仓库位于同级 OctoSense-App-Hub，在本应用目录执行：
 
 ```cmd
-git clone --branch v0.6.1 --single-branch https://github.com/woshuoduijiushidui/OctoSense-AppCard.git OctoSense-Pantry-v0.6.1
-cd OctoSense-Pantry-v0.6.1
-python -X utf8 tools/setup.py
+run.cmd --hub ..\OctoSense-App-Hub\target\release\hub.exe --check
+run.cmd --hub ..\OctoSense-App-Hub\target\release\hub.exe --card-host ..\OctoSense-App-Hub\target\release\card-host.exe --standalone
 ```
 
-如果本机已有 Makepad 等框架依赖，请按 [官方环境说明](https://github.com/OctoSense-org/OctoSense) 配置依赖目录复用，避免重复下载。
+--hub --check 不需要宿主工程或密钥；--standalone 使用官方 card-host，仅验证本地规则，没有模型服务，也不是商店安装。--app-data 可指定独立测试目录，默认预览数据在 .local-state/standalone。删除数据前请备份。
 
-上述新机器完整下载流程尚未重新进行冷启动验证；已有 Windows 环境的运行记录见 [VALIDATION.md](VALIDATION.md)。
+启动器只校验现有摘要，不自动修复。当前工具的源码摘要已记录在 VALIDATION.md；旧版 Windows hub 会产生不同的路径摘要，并可能误拒绝许可证的网址。遇到拒绝应更新工具，不得删除法律声明、改权限绕过门禁，或对封存包重新 stamp。
 
-### 首次启动
+旧 --host-workspace / --prepare-local-test 路线仅保留给历史 0.6.1 的隔离兼容演练，不推荐用它运行此候选。后者涉及仓库外本机测试密钥，必须本人另行同意；本次没有生成密钥。原来的工程和库存未更改。
 
-在完整工程根目录执行：
+在线 AI 必须在提供官方 model 服务的兼容 OctoSense 宿主中测试，在宿主 AI providers 页配置提供方。此处的 card-host 命令不能验证它。正式封存包还要求 publisher-github-v1 支持，兼容正式宿主尚待官方发布；不声称已验证安装或在线完整流程。
 
-```cmd
-apps\pantry-steward\run.cmd --prepare-local-test
-```
+## AI、隐私和边界
 
-此参数表示同意生成本机测试密钥，用于创建本地签名目录并通过官方安装检查。测试密钥保存在仓库之外，不是正式发布者密钥，也不会将应用提交到远程 App Hub。
+- storage 只保存应用自己的库存、档案、方案、历史和备份。
+- model 经官方宿主将目标、档案、库存成分与周期余额发送到用户配置的模型提供方。密钥留在宿主；应用不读取 ai.env 或收集密钥。
+- 在宿主的 AI providers 页面配置模型。预算查询成功不代表模型已配置。失败时手动选择本地规则。停止等待不保证撤销已发送或计费的请求。
+- 没有直接联网主机、麦克风权限或独立应用 Agent 工具。不录音，语音不可用；没有 OCR、照片识别或宿主关闭后的后台执行。
+- 营养数值为原型估算，不是医疗建议，不保证过敏或食品安全。未知食材参与数值规划前须补齐包装标签。
 
-### 后续启动
+用户曾报告旧版在线生成成功；本候选完整在线回归未验证。参见发布者已确认的[隐私说明](PRIVACY.md)、[支持说明](SUPPORT.md)和[审核回答](REVIEW-ANSWERS.md)。
 
-仍在完整工程根目录执行：
+## 发布
 
-```cmd
-apps\pantry-steward\run.cmd
-```
+只分发 bundle/；工具、视频、审核包和本地状态留在包外。Git 属性保护 Windows 下的原始包字节。
 
-启动失败时请保留终端错误信息。不要直接删除 `.local-state`，它包含本机应用数据；删除前应备份。
+[最新默认路线](https://github.com/OctoSense-org/OctoSense-App-Hub/blob/main/docs/SUBMITTING.md)使用准备好的 GitHub 标签工作流及不可变工具链，无需开发者签名密钥。本人审阅工作流并授权发布后，推新的 v0.6.2 标签、校验封存 Release 包，再创建关联 #99 的新版 Issue。不要移动 v0.6.1。目前只在本地准备；不声称已运行工作流、推标签、发布、创建新 Issue 或获批。封存包需支持 publisher-github-v1 的宿主；所引官方指南说明兼容正式宿主仍待发布。
 
-## 使用方法
+待本人确认的环节见[提交准备](SUBMISSION.md)。源码检查或工作流成功不等于比赛合格或 Hub 审核通过。
 
-1. 填写基础资料、偏好与忌口。
-2. 查看周期候选，选择并确认一个周期。
-3. 录入食材、克数和剩余天数，预览后确认入库。
-4. 在首页输入本餐目标，点击生成。
-5. 查看候选的做法与用量，确认接受方案。
-6. 实际吃完后核对真实用量，再确认扣减。
-7. 在冰箱与档案页面查看库存变化和周期记录。
+## 许可证与来源
 
-具体周期规则见 [CYCLE-PLANS.md](CYCLE-PLANS.md)。
-
-## 在线 AI 配置
-
-本版本使用 **OctoSense 官方宿主的 AI providers 设置**。
-
-应用不读取 `ai.env`，不要求用户在应用内填写 API Key，也不在脚本中直接访问模型提供方。请在启动器打开的测试桌面中配置宿主的模型提供方。
-
-```text
-应用提交目标、档案和库存
-          ↓
-官方 model.complete 服务
-          ↓
-宿主管理的模型提供方
-          ↓
-应用校验结果，展示待确认菜单
-```
-
-`model.budget` 查询成功不代表模型已配置或生成已成功。应以实际请求结果和菜单来源标记判断。
-
-用户曾报告在线模型生成成功；自动回归记录主要使用本地规则，不代表已经完成 0.6.1 的完整在线模型测试。
-
-## 验证情况与边界
-
-应用包检查结果：
-
-```text
-pantry-steward 0.6.1 — PASSED
-[warning] publisher-signature: unsigned: accountability rests on the hub alone
-grants: capabilities {"model", "storage"}, hosts {}, storage 16777216 bytes, agent none
-```
-
-启动器的 7 项测试通过。周期功能的隔离 Windows 测试及历史界面测试见 [VALIDATION.md](VALIDATION.md)。
-
-检查通过不等于新机器构建通过、所有功能验证完成、比赛资格确认或正式商店审核通过。
-
-当前限制：
-
-- 麦克风图标仅显示语音识别不可用提示，不录音或上传音频。
-- 未实现照片识别、小票 OCR 或买菜下单。
-- 宿主关闭后不执行后台临期检查。
-- 未验证 Android、iOS、macOS 和 Linux。
-- 能量、营养与周期目标为原型估算，不是医疗或专业营养建议。
-- 食材到期信息由用户填写，应用不能保证食品安全。
-- 未知食材参与数值核算前，需要补齐包装标签成分。
-
-## 数据与隐私
-
-库存、档案、方案和执行记录保存在应用自己的存储目录中。
-
-在线规划会向宿主管理的模型提供方发送本餐目标、饮食档案、库存和成分参考、周期及余额等规划所需信息。提供方的数据处理与费用以其政策和用户账户设置为准。
-
-应用不收集密码或 API Key，不读取其他应用数据；未接入广告与分析统计。
-
-当前 [PRIVACY.md](PRIVACY.md) 仍为待作者确认的说明草稿，正式发布前需完成确认。
-
-## App Hub 提交
-
-已创建提交请求：
-
-[Submit pantry-steward 0.6.1 · Issue #99](https://github.com/OctoSense-org/OctoSense-App-Hub/issues/99)
-
-该请求指定 `v0.6.1`、完整提交号与 `apps/pantry-steward/bundle` 路径，并提供检查输出和审核问题回答。
-
-**已提交审核不代表已上架。** 是否通过及是否进入正式目录，以 App Hub 维护者反馈为准。
-
-比赛提交无需等待商店上架；仓库、固定版本、演示视频及成员资料应按主办方或老师最新通知提交。
-
-## 作者与来源
+[Apache License 2.0](LICENSE)，参见 [NOTICE](NOTICE)。依赖和第三方素材保留各自许可证。作者于 2026-10-08 确认 sunlit-pantry-bg.png 为本人原创，已在 NOTICE 记录；这是作者声明，不是独立权属鉴定或 Hub 审批。
 
 作者：leoniaodo、zix、power胖丸、Roooy。
 
-基础宿主：[OctoSense](https://github.com/OctoSense-org/OctoSense)  
-开发参考：[OctoScript App Design Flow](https://github.com/OctoSense-org/OctoScript-App-Design-Flow)  
-发布规范：[OctoSense App Hub](https://github.com/OctoSense-org/OctoSense-App-Hub)
-
-## 许可证
-
-项目采用 Apache License 2.0。
-
-完整固定版本中的 [LICENSE](https://github.com/woshuoduijiushidui/OctoSense-AppCard/blob/v0.6.1/LICENSE) 与 [NOTICE](https://github.com/woshuoduijiushidui/OctoSense-AppCard/blob/v0.6.1/NOTICE) 可供查阅。分发源码时，应保留适用的许可证和第三方来源声明。
+[OctoSense](https://github.com/OctoSense-org/OctoSense) · [Design Flow](https://github.com/OctoSense-org/OctoScript-App-Design-Flow) · [App Hub](https://github.com/OctoSense-org/OctoSense-App-Hub)

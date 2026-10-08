@@ -15,10 +15,31 @@ import sys
 import tomllib
 
 APP = Path(__file__).resolve().parents[1]
-ROOT = APP.parents[1]
+ROOT = APP
 BUILD = ROOT / "target" / "pantry-official-tools"
 STATE = APP / ".local-state"
 EXE = ".exe" if os.name == "nt" else ""
+
+
+def host_workspace(explicit=None):
+    """Resolve a real host, never guess two parents above a standalone app."""
+    if explicit is not None:
+        candidate = Path(explicit).expanduser().resolve()
+    elif APP.parent.name == "apps":
+        candidate = APP.parent.parent.resolve()
+    else:
+        raise RuntimeError(
+            "此仓库仅含应用。请用 --host-workspace 指定已准备的完整 OctoSense 工程；"
+            "不要直接把应用上两级目录当作宿主。详见 README.zh-CN.md。"
+        )
+    required = ("Cargo.toml", "native-runtime.lock.json", "runtime-patches.lock.json", "tools/setup.py")
+    missing = [name for name in required if not (candidate / name).is_file()]
+    if missing:
+        raise RuntimeError("OctoSense 宿主目录不完整，缺少：" + ", ".join(missing))
+    spec = tomllib.loads((candidate / "Cargo.toml").read_text(encoding="utf-8"))
+    if "octosense-app-hub-app" not in spec.get("workspace", {}).get("dependencies", {}):
+        raise RuntimeError("宿主不含本启动器所需的固定 App Hub 依赖；请使用 README 中的完整 v0.6.1 工程。")
+    return candidate
 
 
 def run(command, capture=False, **kwargs):
@@ -120,7 +141,11 @@ def local_install(hub, installer, allow_keygen, profile=STATE):
 
 
 def main():
+    global ROOT, BUILD
     parser = argparse.ArgumentParser(description="冰箱管家：官方 OctoSense 本地测试")
+    parser.add_argument("--host-workspace", type=Path, help="独立应用必须指定已准备的完整 OctoSense 工程")
+    parser.add_argument("--hub", type=Path, help="已编译的当前官方 hub；仅检查或独立预览，不安装/签名")
+    parser.add_argument("--card-host", type=Path, help="当前官方 card-host；搭配 --hub --standalone")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--build", action="store_true")
     parser.add_argument("--prepare-local-test", action="store_true", help="本人许可后生成本地测试密钥并安装")
@@ -132,8 +157,25 @@ def main():
     parser.add_argument("--app-data", type=Path)
     parser.add_argument("--no-ai", action="store_true", help="兼容旧测试命令；单独 card-host 不提供 AI")
     args = parser.parse_args()
-    hub, host, installer = prepare_tools(args.offline)
-    run([hub, "stamp", APP / "bundle"])
+    if args.hub:
+        if args.prepare_local_test or args.build or args.host_workspace:
+            parser.error("--hub 只用于现成官方工具，不可与本地签名、宿主构建或 --host-workspace 混用")
+        if not args.check and not (args.standalone and args.card_host):
+            parser.error("--hub 需要 --check，或 --standalone --card-host")
+        hub = args.hub.expanduser().resolve()
+        if not hub.is_file():
+            raise RuntimeError("没有找到指定的官方 hub：" + str(hub))
+        host = args.card_host.expanduser().resolve() if args.card_host else None
+        if args.standalone and not args.check and not host.is_file():
+            raise RuntimeError("没有找到指定的官方 card-host：" + str(host))
+        ROOT, BUILD, installer = APP, APP / "target", None
+    else:
+        if args.card_host:
+            parser.error("--card-host 必须搭配 --hub --standalone")
+        ROOT = host_workspace(args.host_workspace)
+        BUILD = ROOT / "target" / "pantry-official-tools"
+        hub, host, installer = prepare_tools(args.offline)
+    # Verify committed bytes. Never silently fix a stale digest at launch.
     run([hub, "check", APP / "bundle", "--allow-unsigned"])
     if args.check or args.build:
         return
