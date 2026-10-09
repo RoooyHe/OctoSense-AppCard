@@ -20,3 +20,17 @@ shell to provide this app with additional privileges.
 - Restamp after bundle changes. Keep real screenshots and bilingual READMEs
   honest. Record what was tested and what remains unverified in VALIDATION.md.
 - Formal identity, privacy, signing and submission are human checkpoints.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs are local markdown under `.scratch/<feature-slug>/`; GitHub Issues are disabled on this repo. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, label strings equal to their names, recorded as the `Status:` line of an issue file. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one root `GLOSSARY.md` plus `docs/adr/`. See `docs/agents/domain.md`.
